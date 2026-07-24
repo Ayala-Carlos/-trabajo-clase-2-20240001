@@ -1,30 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { Platform, StyleSheet, Text, View } from 'react-native';
-
-//importamos el componente PokemonScreen que se encargará de mostrar la pantalla de los Pokémon
-import WorkersScreen from './src/screens/WorkersScreen';
+import React, { useState } from "react";
+import { SafeAreaView, View } from "react-native";
+import WorkersScreen from "./src/screens/WorkersScreen";
+import ApiScreen from "./src/screens/ApiScreen";
+import CustomButton from "./src/components/CustomButton";
 
 export default function App() {
+  const [currentScreen, setCurrentScreen] = useState("workers");
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Mi aplicación consumiendo datos desde una API</Text>
-      <WorkersScreen />
-    </View> 
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#791010" }}>
+      <View style={{ paddingHorizontal: 20, paddingTop: 10 }}>
+        <CustomButton
+          title={
+            currentScreen === "workers"
+              ? "Ir a API Externa"
+              : "Ir a Lista de Empleados"
+          }
+          onPress={() =>
+            setCurrentScreen(currentScreen === "workers" ? "api" : "workers")
+          }
+        />
+      </View>
+
+      {currentScreen === "workers" ? <WorkersScreen /> : <ApiScreen />}
+    </SafeAreaView>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 50,
-    backgroundColor: "#791010",
-  },
-  title: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 10,
-    padding: 20,
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight || 0 : 50,
-  },
-});

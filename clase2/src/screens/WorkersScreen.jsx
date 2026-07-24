@@ -1,25 +1,39 @@
-import React from "react";
-import { View, FlatList, StyleSheet, Text } from "react-native";
-//importamos el componente CustomCard que se encargará de mostrar la información de cada empleado
+import React, { useState } from "react";
+import { View, FlatList, Text } from "react-native";
 import CustomCard from "../components/CustomCard";
-//importamos el hook useCustomData que se encargará de obtener la información de los empleados desde la API
+import CustomInput from "../components/CustomInput";
 import useCustomData from "../hooks/useCustomData";
+import { globalStyles } from "../styles/globalStyles";
 
 const WorkersScreen = () => {
-  //utilizamos el hook useCustomData para obtener la información de los empleados y el estado de loading
   const { workerData, loading } = useCustomData();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtrar empleados por nombre
+  const filteredWorkers = workerData
+    ? workerData.filter((worker) =>
+        worker.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Lista de empleados</Text>
+    <View style={globalStyles.container}>
+      <Text style={globalStyles.title}>Lista de empleados</Text>
 
-      <Text style={styles.description}>
-        En esta pantalla estamos mostrando la lista de empleados utilizando el
-        componente FlatList de RReact Native. Cada empleado se representa
-        mediante un CustomCard que muestra su nombre, trabajo y fecha de inicio.
+      <Text style={globalStyles.description}>
+        En esta pantalla estamos mostrando la lista de empleados. Puedes usar el
+        buscador a continuación para filtrar por nombre.
       </Text>
+
+      {/* Componente de búsqueda */}
+      <CustomInput
+        value={searchQuery}
+        onChangeText={(text) => setSearchQuery(text)}
+        placeholder="Buscar empleado por nombre..."
+      />
+
       <FlatList
-        data={workerData}
+        data={filteredWorkers}
         renderItem={({ item }) => <CustomCard worker={item} />}
         keyExtractor={(item) => item.id.toString()}
       />
@@ -28,23 +42,3 @@ const WorkersScreen = () => {
 };
 
 export default WorkersScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#791010",
-    padding: 20,
-  },
-  title: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  description: {
-    color: "#fff",
-    fontSize: 16,
-    marginBottom: 20,
-    fontWeight: "semibold",
-  },
-});
